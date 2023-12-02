@@ -12,6 +12,8 @@ class SolutionDirectoryCreator:
         day_path = os.path.join(self.base_path, self.day)
         os.makedirs(day_path, exist_ok=True)
 
+        print(f"Made directory at {day_path} {self.day}")
+
         # Create subdirectories for parts 'one' and 'two'
         for part in ["one", "two"]:
             part_path = os.path.join(day_path, part)
