@@ -1,8 +1,10 @@
+import importlib
 import argparse
 import datetime
 import sys
-from typing import Optional
 from generator import create_day
+from typing import Optional
+import importlib.util
 
 
 def main() -> None:
@@ -11,13 +13,11 @@ def main() -> None:
     )
     subparsers = parser.add_subparsers(dest="command")
 
-    # Create subparser for 'create' command
     create_parser = subparsers.add_parser("create")
     create_parser.add_argument(
         "-d", "--day", type=int, help="Day of the month for solution creation"
     )
 
-    # Create subparser for 'run' command
     run_parser = subparsers.add_parser("run")
     run_parser.add_argument(
         "-d", "--day", type=int, required=True, help="Day of the solution to run"
@@ -25,15 +25,14 @@ def main() -> None:
     run_parser.add_argument(
         "-p", "--part", type=int, required=True, help="Part of the solution to run"
     )
+    run_parser.add_argument("-i", "--input", type=int, help="Input file number")
 
-    # Parse arguments
     args = parser.parse_args()
 
     if args.command == "create":
         handle_create(args.day)
     elif args.command == "run":
-        # Placeholder for future implementation
-        print(f"Running solution for day {args.day} part {args.part}")
+        handle_run(args.day, args.part, args.input)
     else:
         parser.print_help()
 
@@ -44,8 +43,25 @@ def handle_create(day: Optional[int]) -> None:
     if not (1 <= day <= 31):
         sys.exit("Error: Invalid day. Please provide a day between 1 and 31.")
 
-    # Assuming create_day.py has a function named create_solution_directory
     create_day.create_solution_directory(str(day))
+
+
+def handle_run(day: int, part: int, input_number: Optional[int] = None) -> None:
+    module_name = f"solutions.days.{day}.{part}.solution"
+    class_name = "PartSolution"
+
+    input_file = f"input{input_number}.txt" if input_number is not None else "input.txt"
+
+    try:
+        module = importlib.import_module(module_name)
+
+        solution_class = getattr(module, class_name)
+        solution_instance = solution_class(input_file)
+        solution = solution_instance.solve()
+        print(f"Solution is {solution}")
+    except (ModuleNotFoundError, AttributeError) as e:
+        print(e)
+        print(f"Solution for Day {day}, Part {part} not found or not implemented.")
 
 
 if __name__ == "__main__":

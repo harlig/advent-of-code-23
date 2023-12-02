@@ -1,3 +1,4 @@
+from pathlib import Path
 import os
 from typing import NoReturn
 
@@ -8,17 +9,20 @@ class SolutionDirectoryCreator:
         self.base_path: str = "../solutions/days/"
 
     def create_directories(self) -> NoReturn:
-        # Create the main directory for the day
-        day_path = os.path.join(self.base_path, self.day)
-        os.makedirs(day_path, exist_ok=True)
+        day_path = self.base_path / self.day
+        day_path.mkdir(parents=True, exist_ok=True)
+        self.create_init_file(day_path)
 
-        print(f"Made directory at {day_path} {self.day}")
-
-        # Create subdirectories for parts 'one' and 'two'
-        for part in ["one", "two"]:
-            part_path = os.path.join(day_path, part)
-            os.makedirs(part_path, exist_ok=True)
+        for part in ["1", "2"]:
+            part_path = day_path / part
+            part_path.mkdir(parents=True, exist_ok=True)
+            self.create_init_file(part_path)
             self.create_boilerplate_file(part_path)
+
+    @staticmethod
+    def create_init_file(path: Path) -> None:
+        init_file_path = path / "__init__.py"
+        init_file_path.touch(exist_ok=True)
 
     @staticmethod
     def create_boilerplate_file(path: str) -> None:
