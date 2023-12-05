@@ -1,7 +1,7 @@
 from solutions.solution import Solution
 
 
-class PartSolution(Solution):
+class DaySolution(Solution):
     def solve_part_one(self) -> str:
         print(self.input_data)
         total: int = 0

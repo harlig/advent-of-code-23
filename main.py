@@ -50,7 +50,7 @@ def handle_create(day: Optional[int]) -> None:
 
 def handle_run(day: int, part: int, input_number: Optional[int] = None) -> None:
     module_name = f"solutions.days.{day}.solution"
-    class_name = "PartSolution"
+    class_name = "DaySolution"
 
     input_file = f"input{input_number}.txt" if input_number is not None else "input.txt"
 
