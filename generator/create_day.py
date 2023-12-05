@@ -15,6 +15,7 @@ class SolutionDirectoryCreator:
         day_path.mkdir(parents=True, exist_ok=True)
         self.create_init_file(day_path)
         self.create_boilerplate_file(day_path)
+        self.create_input_files(day_path)
 
     @staticmethod
     def create_init_file(path: Path) -> None:
@@ -25,8 +26,7 @@ class SolutionDirectoryCreator:
     @staticmethod
     def create_boilerplate_file(path: Path) -> None:
         print(f"Creating boilerplate file for path {path}")
-        boilerplate_code = """
-from solutions.solution import Solution
+        boilerplate_code = """from solutions.solution import Solution
 
 
 class DaySolution(Solution):
@@ -40,6 +40,13 @@ class DaySolution(Solution):
 """
         with open(os.path.join(path, "solution.py"), "w") as file:
             file.write(boilerplate_code)
+
+    @staticmethod
+    def create_input_files(path: Path) -> None:
+        print(f"Creating input files for path {path}")
+        for input_file_number in range(3):
+            input_file_path = path / f"input{input_file_number}.txt"
+            input_file_path.touch(exist_ok=True)
 
 
 def create_solution_directory(day: str) -> None:
