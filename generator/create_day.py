@@ -40,7 +40,7 @@ class DaySolution(Solution):
 
 
 if __name__ == "__main__":
-    today_solution = DaySolution("input0.txt")
+    today_solution = DaySolution("input1.txt")
     print("running part one")
     part_one = today_solution.solve_part_one()
     print("part one results:")
