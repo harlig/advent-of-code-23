@@ -14,7 +14,7 @@ class SolutionDirectoryCreator:
         self.create_init_file(day_path)
 
         for part in ["1", "2"]:
-            part_path = day_path / part
+            part_path = day_path
             part_path.mkdir(parents=True, exist_ok=True)
             self.create_init_file(part_path)
             self.create_boilerplate_file(part_path)

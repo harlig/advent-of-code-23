@@ -6,6 +6,8 @@ from generator import create_day
 from typing import Optional
 import importlib.util
 
+from solutions.solution import Solution
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -47,7 +49,7 @@ def handle_create(day: Optional[int]) -> None:
 
 
 def handle_run(day: int, part: int, input_number: Optional[int] = None) -> None:
-    module_name = f"solutions.days.{day}.{part}.solution"
+    module_name = f"solutions.days.{day}.solution"
     class_name = "PartSolution"
 
     input_file = f"input{input_number}.txt" if input_number is not None else "input.txt"
@@ -56,8 +58,13 @@ def handle_run(day: int, part: int, input_number: Optional[int] = None) -> None:
         module = importlib.import_module(module_name)
 
         solution_class = getattr(module, class_name)
-        solution_instance = solution_class(input_file)
-        solution = solution_instance.solve()
+        solution_instance: Solution = solution_class(input_file)
+
+        solution = (
+            solution_instance.solve_part_one()
+            if part == 1
+            else solution_instance.solve_part_two()
+        )
         print(f"Solution is {solution}")
     except (ModuleNotFoundError, AttributeError) as e:
         print(e)

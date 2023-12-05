@@ -18,5 +18,8 @@ class Solution:
         with open(self.input_file_path, "r") as file:
             return [line.strip() for line in file.readlines()]
 
-    def solve(self) -> str:
+    def solve_part_one(self) -> str:
+        raise NotImplementedError("Solve method must be implemented by subclasses.")
+
+    def solve_part_two(self) -> str:
         raise NotImplementedError("Solve method must be implemented by subclasses.")
