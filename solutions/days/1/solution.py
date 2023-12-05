@@ -34,11 +34,10 @@ class PartSolution(Solution):
             for char in calibration_line:
                 if char.isdigit():
                     digits.append(str(char))
+                    current_considered_index_into_word_at_word_index = [
+                        0 for _ in current_considered_index_into_word_at_word_index
+                    ]
                     continue
-
-                print(
-                    f"Checking char {char}; state of indexes {current_considered_index_into_word_at_word_index}"
-                )
 
                 # loop over digit spelling and we can just always consider all of them
                 for digit_ndx, spelling in enumerate(valid_digit_spellings):
@@ -60,13 +59,18 @@ class PartSolution(Solution):
                             current_considered_index_into_word_at_word_index[
                                 digit_ndx
                             ] = 0
+                            if char == spelling[0]:
+                                current_considered_index_into_word_at_word_index[
+                                    digit_ndx
+                                ] += 1
                     else:
                         current_considered_index_into_word_at_word_index[digit_ndx] = 0
+                        if char == spelling[0]:
+                            current_considered_index_into_word_at_word_index[
+                                digit_ndx
+                            ] += 1
 
             print(f"digits are {digits}")
-            total_str = digits[0]
-            if len(digits) > 1:
-                total_str += digits[-1]
-            total += int(total_str)
+            total += int(digits[0] + digits[-1])
             print(f"total is now {total}")
         return str(total)
