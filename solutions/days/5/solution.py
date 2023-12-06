@@ -79,7 +79,7 @@ class DaySolution(Solution):
 
         return str(min(results))
 
-    def solve_part_two(self) -> str:
+    def solve_part_two_old(self) -> str:
         maps = {}
 
         current_name = None
@@ -166,9 +166,50 @@ class DaySolution(Solution):
 
         return str(min(results))
 
+    def solve_part_two(self) -> str:
+        results = []
+
+        seed_ranges_raw = self.input_data[0].split(": ")[1].split(" ")
+        current_indexes = []
+        for ndx in range(0, len(seed_ranges_raw), 2):
+            start_seed = int(seed_ranges_raw[ndx].strip())
+            seed_range = int(seed_ranges_raw[ndx + 1].strip())
+
+            for seed_index in range(start_seed + seed_range):
+                while seed_index >= len(current_indexes):
+                    current_indexes.append(len(current_indexes))
+
+        for line in self.input_data[2:]:
+            if len(line.strip()) == 0:
+                continue
+            elif line.strip().endswith("map:"):
+                continue
+            else:
+                split = line.strip().split(" ")
+                destination_range_start = int(split[0])
+                source_range_start = int(split[1])
+                range_len = int(split[2])
+                processed_indexes = []
+                for value in range(source_range_start, source_range_start + range_len):
+                    while value >= len(current_indexes):
+                        print(
+                            f"Extending current indexes bc value si {value} and len is {len(current_indexes)}"
+                        )
+                        current_indexes.append(len(current_indexes))
+                    for ndx, current_index_val in enumerate(current_indexes):
+                        if current_index_val == value and ndx not in processed_indexes:
+                            current_indexes[ndx] = (
+                                destination_range_start + value - source_range_start
+                            )
+                            processed_indexes.append(ndx)
+            print(current_indexes)
+        results.append(min(current_indexes))
+
+        return str(min(results))
+
 
 if __name__ == "__main__":
-    today_solution = DaySolution("input0.txt")
+    today_solution = DaySolution("input1.txt")
     # print("running part one")
     # part_one = today_solution.solve_part_one()
     # print("part one results:")
