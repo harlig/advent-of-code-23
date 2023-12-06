@@ -26,17 +26,17 @@ class SolutionDirectoryCreator:
     @staticmethod
     def create_boilerplate_file(path: Path) -> None:
         print(f"Creating boilerplate file for path {path}")
-        boilerplate_code = """from solutions.solution import Solution
+        boilerplate_code = f"""from solutions.solution import Solution
 
 
 class DaySolution(Solution):
     def solve_part_one(self) -> str:
         print(self.input_data)
-        return str("change me pls")
+        return str("{path} part 1")
 
     def solve_part_two(self) -> str:
         print(self.input_data)
-        return str("change me pls")
+        return str("{path} part 2")
 
 
 if __name__ == "__main__":
