@@ -125,44 +125,44 @@ class DaySolution(Solution):
         results = []
 
         seed_ranges_raw = self.input_data[0].split(": ")[1].split(" ")
+        current_indexes = []
         for ndx in range(0, len(seed_ranges_raw), 2):
             start_seed = int(seed_ranges_raw[ndx].strip())
             seed_range = int(seed_ranges_raw[ndx + 1].strip())
-            # for seed_offset in range(seed_range):
-            #     seeds.append(start_seed + seed_offset)
-            # print(len(seeds))
 
-            # get answer for each of the initial seeds
-            # for seed in seeds:
-            starting_map_key = [
-                possible_map_key
-                for possible_map_key in maps.keys()
-                if maps[possible_map_key]["comes_from"] is None
-            ][0]
-            current_map_key = starting_map_key
-            # current_value = int(start_seed)
-            current_indexes = [ndx + int(start_seed) for ndx in range(seed_range)]
-            while current_map_key is not None:
-                current_map = maps[current_map_key]
+            for seed_offset in range(seed_range):
+                if seed_offset not in current_indexes:
+                    current_indexes.append(start_seed + seed_offset)
 
-                for index_into_current_indexes, current_value in enumerate(
-                    current_indexes
-                ):
-                    for affected_source_range in current_map["affected_source_ranges"]:
-                        if (
-                            affected_source_range[0]
-                            <= current_value
-                            < affected_source_range[1]
-                        ):
-                            current_indexes[index_into_current_indexes] = (
-                                current_value
-                                - affected_source_range[0]
-                                + affected_source_range[2]
-                            )
-                            break
+        starting_map_key = [
+            possible_map_key
+            for possible_map_key in maps.keys()
+            if maps[possible_map_key]["comes_from"] is None
+        ][0]
+        current_map_key = starting_map_key
+        # current_value = int(start_seed)
+        # current_indexes = [ndx + int(start_seed) for ndx in range(seed_range)]
+        while current_map_key is not None:
+            current_map = maps[current_map_key]
 
-                current_map_key = current_map["goes_to"]
-            results.append(min([int(location) for location in current_indexes]))
+            current_indexes = list(set(current_indexes))
+
+            for index_into_current_indexes, current_value in enumerate(current_indexes):
+                for affected_source_range in current_map["affected_source_ranges"]:
+                    if (
+                        affected_source_range[0]
+                        <= current_value
+                        < affected_source_range[1]
+                    ):
+                        current_indexes[index_into_current_indexes] = (
+                            current_value
+                            - affected_source_range[0]
+                            + affected_source_range[2]
+                        )
+                        break
+
+            current_map_key = current_map["goes_to"]
+        results.append(min([int(location) for location in current_indexes]))
 
         return str(min(results))
 
