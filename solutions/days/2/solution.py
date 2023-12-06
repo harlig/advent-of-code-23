@@ -43,18 +43,38 @@ class DaySolution(Solution):
 
     def solve_part_two(self) -> str:
         print(self.input_data)
-        return str("change me pls")
+        all_powers = 0
+        for game_line in self.input_data:
+            print(f"Processing {game_line}")
+            game_scores = game_line.split(":", 2)[1].strip().split(";")
+            most_cubes_per_game = {
+                "red": 0,
+                "green": 0,
+                "blue": 0,
+            }
+            for game_score in game_scores:
+                for full_color_score in game_score.split(","):
+                    values = full_color_score.strip().split(" ")
+                    if most_cubes_per_game[values[1]] < int(values[0]):
+                        most_cubes_per_game[values[1]] = int(values[0])
+
+            power = 1
+            for cube_color in most_cubes_per_game.keys():
+                power *= most_cubes_per_game[cube_color]
+            all_powers += power
+        print(all_powers)
+        return str(all_powers)
 
 
 if __name__ == "__main__":
     today_solution = DaySolution("input0.txt")
-    print("running part one")
-    part_one = today_solution.solve_part_one()
-    print("part one results:")
-    print(part_one)
+    # print("running part one")
+    # part_one = today_solution.solve_part_one()
+    # print("part one results:")
+    # print(part_one)
 
     # enable once part one solved
-    # print("running part two")
-    # part_two = today_solution.solve_part_two()
-    # print("part two results:")
-    # print(part_two)
+    print("running part two")
+    part_two = today_solution.solve_part_two()
+    print("part two results:")
+    print(part_two)
