@@ -66,18 +66,92 @@ class DaySolution(Solution):
 
     def solve_part_two(self) -> str:
         print(self.input_data)
-        return str("../solutions/days/3 part 2")
+        part_sum = 0
+        parts_summed_coords = []
+        for row_ndx, row in enumerate(self.input_data):
+            for col_ndx, char in enumerate(row):
+                # if 32 <= int(char) <= 47 and int(char) != 46:
+                if ("!" <= char <= "/" and char != ".") or char == "@" or char == "=":
+                    adjacent_part_numbers = []
+                    for row_offset_to_process in range(-1, 2):
+                        for col_offset_to_process in range(-1, 2):
+                            if (
+                                row_offset_to_process == 0
+                                and col_offset_to_process == 0
+                            ):
+                                continue
+                            check_row_ndx = row_ndx + row_offset_to_process
+                            check_col_ndx = col_ndx + col_offset_to_process
+                            check_row = self.input_data[check_row_ndx]
+                            check_char = check_row[check_col_ndx]
+
+                            if (
+                                check_row_ndx,
+                                check_col_ndx,
+                            ) in parts_summed_coords:
+                                continue
+                            if (
+                                check_row_ndx < 0
+                                or check_row_ndx > len(self.input_data)
+                                or check_col_ndx < 0
+                                or check_col_ndx > len(row)
+                            ):
+                                continue
+
+                            can_count_number = True
+                            if check_char.isdigit():
+                                number_str = check_char
+                                for number_col in range(check_col_ndx - 1, -1, -1):
+                                    if (
+                                        check_row_ndx,
+                                        number_col,
+                                    ) in parts_summed_coords:
+                                        can_count_number = False
+                                    if str(check_row[number_col]).isdigit():
+                                        number_str = (
+                                            str(check_row[number_col]) + number_str
+                                        )
+                                    else:
+                                        break
+                                for number_col in range(
+                                    check_col_ndx + 1, len(check_row)
+                                ):
+                                    if (
+                                        check_row_ndx,
+                                        number_col,
+                                    ) in parts_summed_coords:
+                                        can_count_number = False
+                                    if str(check_row[number_col]).isdigit():
+                                        number_str = number_str + str(
+                                            check_row[number_col]
+                                        )
+                                    else:
+                                        break
+                                if can_count_number:
+                                    adjacent_part_numbers.append(int(number_str))
+                                    parts_summed_coords.append(
+                                        (check_row_ndx, check_col_ndx)
+                                    )
+
+                            if len(adjacent_part_numbers) == 2:
+                                print(adjacent_part_numbers)
+                                part_sum += (
+                                    adjacent_part_numbers[0] * adjacent_part_numbers[1]
+                                )
+                                adjacent_part_numbers = []
+
+        return str(part_sum)
 
 
 if __name__ == "__main__":
     today_solution = DaySolution("input0.txt")
-    print("running part one")
-    part_one = today_solution.solve_part_one()
-    print("part one results:")
-    print(part_one)
+    # print("running part one")
+    # part_one = today_solution.solve_part_one()
+    # print("part one results:")
+    # print(part_one)
 
     # enable once part one solved
-    # print("running part two")
-    # part_two = today_solution.solve_part_two()
-    # print("part two results:")
-    # print(part_two)
+    print("running part two")
+    part_two = today_solution.solve_part_two()
+    print("part two results:")
+    print(part_two)
