@@ -17,7 +17,8 @@ class DaySolution(Solution):
         elif card == "T":
             score = 10
         elif card == "J":
-            score = 11
+            # part 2
+            score = 0
         elif card == "Q":
             score = 12
         elif card == "K":
@@ -35,12 +36,10 @@ class DaySolution(Solution):
             first_score = DaySolution.score_from_card(card)
             second_score = DaySolution.score_from_card(second[0][ndx])
             if first_score != second_score:
-                print(f"not equal; first {first_score}; second {second_score}")
                 return first_score - second_score
         return 0
 
     def solve_part_one(self) -> str:
-        print(self.input_data)
         hands = []
         bids = []
 
@@ -157,19 +156,129 @@ class DaySolution(Solution):
         return total, max_ndx
 
     def solve_part_two(self) -> str:
-        print(self.input_data)
-        return str("../solutions/days/7 part 2")
+        hands = []
+        bids = []
+
+        five_of_kind = []
+        four_of_kind = []
+        full_house = []
+        three_of_kind = []
+        two_pair = []
+        one_pair = []
+        high_card = []
+        # array of each possible type
+        # keep track of hand and bid
+        for line in self.input_data:
+            hand = line.split(" ")[0]
+            bid = int(line.strip().split(" ")[1])
+
+            counts = {}
+            num_jokers = 0
+            for card in hand:
+                if card not in counts:
+                    counts[card] = 0
+                if card == "J":
+                    num_jokers += 1
+                counts[card] += 1
+
+            max_count_same_card_excluding_jokers = 0
+            for card in [key for key in counts.keys() if key != "J"]:
+                if counts[card] > max_count_same_card_excluding_jokers:
+                    max_count_same_card_excluding_jokers = counts[card]
+            print(max_count_same_card_excluding_jokers, num_jokers)
+            counts_as_set = set([counts[key] for key in counts.keys()])
+
+            if len(counts.keys()) == 1 or (
+                max_count_same_card_excluding_jokers + num_jokers == 5
+            ):
+                five_of_kind.append(self.list_item_from_hand_and_bid(hand, bid))
+            elif (2 == len(counts.keys()) and (counts_as_set in [{1, 4}])) or (
+                len(counts.keys()) == 3
+                and (max_count_same_card_excluding_jokers + num_jokers == 4)
+            ):
+                four_of_kind.append(self.list_item_from_hand_and_bid(hand, bid))
+            elif len(counts.keys()) == 2 or (
+                len(counts.keys()) == 3 and 1 <= num_jokers <= 3
+            ):
+                full_house.append(self.list_item_from_hand_and_bid(hand, bid))
+            elif max_count_same_card_excluding_jokers + num_jokers == 3:
+                three_of_kind.append(self.list_item_from_hand_and_bid(hand, bid))
+            elif len(counts.keys()) == 3:
+                two_pair.append(self.list_item_from_hand_and_bid(hand, bid))
+            else:
+                is_one_pair = False
+                for key in counts.keys():
+                    if counts[key] == 2 or "J" in hand:
+                        one_pair.append(self.list_item_from_hand_and_bid(hand, bid))
+                        is_one_pair = True
+                        break
+                if not is_one_pair:
+                    high_card.append(self.list_item_from_hand_and_bid(hand, bid))
+
+            hands.append(hand)
+            bids.append(bid)
+
+        # determine type of hand, include it in the type for that thing,
+        # then sort within the type array to figure out where to insert, keep track of bid
+
+        five_of_kind = sorted(
+            five_of_kind, key=functools.cmp_to_key(self.compare_two_list_items)
+        )
+        four_of_kind = sorted(
+            four_of_kind, key=functools.cmp_to_key(self.compare_two_list_items)
+        )
+        full_house = sorted(
+            full_house, key=functools.cmp_to_key(self.compare_two_list_items)
+        )
+        three_of_kind = sorted(
+            three_of_kind, key=functools.cmp_to_key(self.compare_two_list_items)
+        )
+        two_pair = sorted(
+            two_pair, key=functools.cmp_to_key(self.compare_two_list_items)
+        )
+        one_pair = sorted(
+            one_pair, key=functools.cmp_to_key(self.compare_two_list_items)
+        )
+        high_card = sorted(
+            high_card, key=functools.cmp_to_key(self.compare_two_list_items)
+        )
+
+        lowest_to_highest_types = [
+            high_card,
+            one_pair,
+            two_pair,
+            three_of_kind,
+            full_house,
+            four_of_kind,
+            five_of_kind,
+        ]
+        for ndx, ordered_type in enumerate(lowest_to_highest_types):
+            print(ndx, ordered_type)
+
+        total = 0
+        hand_to_process = 1
+        for hand_type in lowest_to_highest_types:
+            winnings, hand_to_process = self.compute_winnings(
+                hand_type, hand_to_process
+            )
+            total += winnings
+        return str(total)
 
 
 if __name__ == "__main__":
     today_solution = DaySolution("input0.txt")
-    print("running part one")
-    part_one = today_solution.solve_part_one()
-    print("part one results:")
-    print(part_one)
+    # print("running part one")
+    # part_one = today_solution.solve_part_one()
+    # print("part one results:")
+    # print(part_one)
 
     # enable once part one solved
-    # print("running part two")
-    # part_two = today_solution.solve_part_two()
-    # print("part two results:")
-    # print(part_two)
+    print("running part two")
+    part_two = today_solution.solve_part_two()
+    print("part two results:")
+    print(part_two)
+
+    # 250633423
+    # 250563472
+    # 250937246
+    # 250884795
